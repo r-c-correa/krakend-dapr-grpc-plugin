@@ -1,0 +1,36 @@
+{
+  "version": 2,
+  "name": "general",
+  "port": 8001,
+  "plugin": {
+      "pattern":".so",
+      "folder": "/etc/krakend/"
+  },
+  "extra_config": {
+    "github_com/devopsfaith/krakend-gologging": {
+      "level":  "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    }
+  },
+  "endpoints": [
+    {
+      "endpoint": "/invoke",
+      "method": "POST",
+      "backend": [
+          {
+            "host": [ "host.docker.internal:7004" ],
+            "url_pattern": "/dapr.proto.runtime.v1.Dapr/InvokeService",
+            "method": "POST",
+            "extra_config": {
+                "github.com/devopsfaith/krakend/transport/http/client/executor": {
+                    "name": "krakend-dapr-grpc-plugin",
+                    "endpoints": [ "host.docker.internal:7004" ]
+                }
+            }
+        }
+      ]
+    }
+  ]
+}
